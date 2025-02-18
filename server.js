@@ -34,9 +34,17 @@ app.post('/execute-trade', async (req, res) => {
         const contract = new ethers.Contract(contractAddress, contractABI, wallet);
         console.log('Connected to contract');
 
-        // Execute the trade
-        console.log('Sending transaction to execute trade...');
-        const tx = await contract.executeTrade(tokenIn, tokenOut, flashloanAmt);
+        // Prepare the parameters for initiateArbitrage
+        const assets = [tokenIn]; // Array of token addresses
+        const amounts = [flashloanAmt]; // Array of amounts (in wei)
+        const params = ethers.utils.defaultAbiCoder.encode(
+            ['address', 'address'], // Encode tokenIn and tokenOut as bytes
+            [tokenIn, tokenOut]
+        );
+
+        // Execute the arbitrage
+        console.log('Sending transaction to initiate arbitrage...');
+        const tx = await contract.initiateArbitrage(assets, amounts, params);
         console.log('Transaction sent. Transaction hash:', tx.hash);
 
         // Wait for the transaction to be mined
@@ -51,6 +59,7 @@ app.post('/execute-trade', async (req, res) => {
     }
 });
 
+// Start the server
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
