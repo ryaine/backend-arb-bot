@@ -26,8 +26,8 @@ console.log('Contract address:', contractAddress);
 
 // Endpoint to execute a trade
 app.post('/execute-trade', async (req, res) => {
-    const { tokenIn, tokenOut, flashloanAmt } = req.body;
-    console.log('Received request to execute trade:', { tokenIn, tokenOut, flashloanAmt });
+    const { tokenIn, tokenOut, flashloanAmt, gasLimit } = req.body;
+    console.log('Received request to execute trade:', { tokenIn, tokenOut, flashloanAmt, gasLimit });
 
     try {
         // Connect to the contract
@@ -44,7 +44,7 @@ app.post('/execute-trade', async (req, res) => {
 
         // Execute the arbitrage
         console.log('Sending transaction to initiate arbitrage...');
-        const tx = await contract.initiateArbitrage(assets, amounts, params);
+        const tx = await contract.initiateArbitrage(assets, amounts, params, gasLimit);
         console.log('Transaction sent. Transaction hash:', tx.hash);
 
         // Wait for the transaction to be mined
