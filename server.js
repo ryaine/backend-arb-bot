@@ -42,9 +42,14 @@ app.post('/execute-trade', async (req, res) => {
             [tokenIn, tokenOut]
         );
 
+        // Set a manual gas limit if gas estimation fails
+        let manualGasLimit = gasLimit || 5000000; // Default to 5,000,000 gas if not provided
+
         // Execute the arbitrage
         console.log('Sending transaction to initiate arbitrage...');
-        const tx = await contract.initiateArbitrage(assets, amounts, params, gasLimit);
+        const tx = await contract.initiateArbitrage(assets, amounts, params, manualGasLimit, {
+            gasLimit: manualGasLimit, // Use the manual gas limit
+        });
         console.log('Transaction sent. Transaction hash:', tx.hash);
 
         // Wait for the transaction to be mined
