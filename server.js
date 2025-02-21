@@ -57,6 +57,11 @@ app.post('/execute-trade', async (req, res) => {
         const receipt = await tx.wait();
         console.log('Transaction mined. Receipt:', receipt);
 
+        // Check if the transaction was successful
+        if (receipt.status === 0) {
+            throw new Error('Transaction reverted: Flash loan failed');
+        }
+
         res.json({ success: true, transactionHash: tx.hash, receipt });
     } catch (error) {
         console.error('Error executing trade:', error.message);
